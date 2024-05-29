@@ -3,7 +3,6 @@ package com.itbank.smartFarm.controller;
 import com.itbank.smartFarm.service.DownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 @Controller
 @RequestMapping("/download")
@@ -33,16 +31,16 @@ public class DownloadController {
     @GetMapping("/{filename}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
         try {
-            // 파일 로드
-            Path file = ds.loadFile(filename);
-            if (file == null) {
+            // DownloadService를 사용하여 파일을 Resource 객체로 가져옴
+            Resource resource = ds.loadFileAsResource(filename);
+            if (resource == null || !resource.exists()) {
+                // 파일을 찾을 수 없거나 리소스가 존재하지 않는 경우 404 응답 반환
+                System.out.println("File not found: " + filename);
                 return ResponseEntity.notFound().build();
             }
-            // 파일을 리소스로 변환
-            Resource resource = new UrlResource(file.toUri());
-
-            // 파일을 다운로드하도록 응답 헤더를 설정하고 파일을 바디에 추가 후 반환
+            // 파일 다운로드 응답 생성
             return ResponseEntity.ok()
+                    // Content-Disposition 헤더를 설정하여 파일 다운로드를 브라우저에게 지시
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         } catch (IOException e) {

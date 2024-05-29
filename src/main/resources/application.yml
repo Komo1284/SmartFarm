@@ -21,6 +21,3 @@ spring:
      prefix: classpath:/templates/
      suffix: .html
 
-# 파일 다운로드 디렉토리 설정
-file:
-  download-dir: src/main/resources/static/download
