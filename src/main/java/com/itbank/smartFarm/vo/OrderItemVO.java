@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ShipmentsVO {
-	private int id;
-	private String address, status;
+public class OrderItemVO {
+	private int id, order_id, price, count;
+	private String product_name;
 
 }
