@@ -1,7 +1,9 @@
 package com.itbank.smartFarm.controller;
 
 import com.itbank.smartFarm.service.BoardService;
+import com.itbank.smartFarm.service.ChatService;
 import com.itbank.smartFarm.vo.BoardVO;
+import com.itbank.smartFarm.vo.MessageVO;
 import com.itbank.smartFarm.vo.ReplyVO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class BoardController {
 
     @Autowired
     private BoardService bs;
+
+    @Autowired
+    private ChatService cs;
 
     // 현재 세션에 있는 유저 정보 (중복 제거를 위한 별도 메소드 할당)
     private MemberVO getUser(HttpSession session) {
@@ -110,20 +115,25 @@ public class BoardController {
     // 지정된 글 번호(id)의 상세 글 내용 조회
     @GetMapping("/freemarket_view/{id}")
     public ModelAndView freemarket(@PathVariable("id") int id, HttpSession session) {
-        MemberVO user = (MemberVO) session.getAttribute("user");
-        // 상세 글 조회 시, 현재 접속 중인 계정의 id를 검색해 수정/삭제 버튼을 보이게 하기 위함
-        int memberid = (user != null) ? user.getId() : -1;
 
-        ModelAndView mav = new ModelAndView();
+        ModelAndView mav = new ModelAndView("board/freemarket_view");
+        // 상세 글 조회 시, 현재 접속 중인 계정의 id를 검색해 수정/삭제 버튼을 보이게 하기 위함
 
         bs.updateViewCount(id);
         mav.addObject("freemarket", bs.getMarket(id));
-        mav.addObject("memberid", memberid);
-        mav.addObject("replies", bs.getReplies(id));
-
-        mav.setViewName("board/freemarket_view");
 
         return mav;
+    }
+
+    @PostMapping("/freemarket_view/{id}")
+    public String chat_start(@PathVariable("id") int id, MessageVO message, HttpSession session) {
+        // 게시글 id 로 해당 게시글의 작성자 member_id를 찾아서 해당아이디를 receiver_id
+        message.setReceiverId(bs.getMarket(id).getMember_id());
+        // session의 member_id를 sender_id로 설정하여 메세지전송
+        MemberVO member = (MemberVO) session.getAttribute("user");
+        message.setSenderId(member.getId());
+        cs.startChat(message);
+        return "redirect:/chat";
     }
 
     // 장터 작성 폼으로 전송 (비 로그인 시 로그인으로 리다이렉트)
