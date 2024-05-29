@@ -25,8 +25,7 @@ public class BoardController {
     private BoardService bs;
 
     // 현재 세션에 있는 유저 정보 (중복 제거를 위한 별도 메소드 할당)
-    private MemberVO getUser(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    private MemberVO getUser(HttpSession session) {
         return (MemberVO) session.getAttribute("user");
     }
 
@@ -45,8 +44,8 @@ public class BoardController {
 
     // 지정된 글 번호(id)의 상세 글 내용 조회
     @GetMapping("/notice_view/{id}")
-    public String notice(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        MemberVO user = getUser(request);
+    public String notice(@PathVariable("id") int id, Model model, HttpSession session) {
+        MemberVO user = getUser(session);
         // 상세 글 조회 시, 현재 접속 중인 계정의 id를 검색해 수정/삭제 버튼을 보이게 하기 위함
         int memberId = (user != null) ? user.getId() : -1;
 
@@ -110,15 +109,21 @@ public class BoardController {
 
     // 지정된 글 번호(id)의 상세 글 내용 조회
     @GetMapping("/freemarket_view/{id}")
-    public String freemarket(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        MemberVO user = getUser(request);
+    public ModelAndView freemarket(@PathVariable("id") int id, HttpSession session) {
+        MemberVO user = (MemberVO) session.getAttribute("user");
         // 상세 글 조회 시, 현재 접속 중인 계정의 id를 검색해 수정/삭제 버튼을 보이게 하기 위함
         int memberid = (user != null) ? user.getId() : -1;
 
+        ModelAndView mav = new ModelAndView();
+
         bs.updateViewCount(id);
-        model.addAttribute("freemarket", bs.getMarket(id));
-        model.addAttribute("memberid", memberid);
-        return "board/freemarket_view";
+        mav.addObject("freemarket", bs.getMarket(id));
+        mav.addObject("memberid", memberid);
+        mav.addObject("replies", bs.getReplies(id));
+
+        mav.setViewName("board/freemarket_view");
+
+        return mav;
     }
 
     // 장터 작성 폼으로 전송 (비 로그인 시 로그인으로 리다이렉트)
@@ -129,9 +134,9 @@ public class BoardController {
 
     // 장터 글 작성 처리
     @PostMapping("/freemarket_write")
-    public String freemarketwrite(BoardVO input, HttpServletRequest request) {
+    public String freemarketwrite(BoardVO input, HttpSession session) {
         // 현재 세션에 저장된 유저 정보 획득
-        MemberVO user = getUser(request);
+        MemberVO user = getUser(session);
         input.setMember_id(user.getId());
         bs.addMarket(input);
         return "redirect:/board/market";
@@ -198,8 +203,8 @@ public class BoardController {
 
 
     @GetMapping("/view/{id}")
-    public ModelAndView view(@PathVariable int id, HttpServletRequest request) {
-        MemberVO user = getUser(request);
+    public ModelAndView view(@PathVariable int id, HttpSession session) {
+        MemberVO user = getUser(session);
         ModelAndView mav = new ModelAndView();
 
         bs.updateViewCount(id);
@@ -212,8 +217,8 @@ public class BoardController {
     }
 
     @GetMapping("/fB_view/{id}")
-    public ModelAndView fB_view(@PathVariable int id, HttpServletRequest request) {
-        MemberVO user = getUser(request);
+    public ModelAndView fB_view(@PathVariable int id, HttpSession session) {
+        MemberVO user = getUser(session);
         ModelAndView mav = new ModelAndView();
 
         bs.updateViewCount(id);
