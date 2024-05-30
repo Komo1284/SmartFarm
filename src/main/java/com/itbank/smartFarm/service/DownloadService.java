@@ -11,12 +11,12 @@ import java.nio.file.Paths;
 
 @Service
 public class DownloadService {
+    // 파일 경로 지정
     private final Path rootLocation = Paths.get("src/main/resources/static/download");
 
     public Resource loadFileAsResource(String filename) throws IOException {
         Path file = rootLocation.resolve(filename);
-        if (!Files.exists(file)) {
-            // 파일이 존재하지 않는 경우
+        if (!Files.exists(file)) {  // 파일이 존재하지 않는 경우
             System.out.println("File does not exist: " + file.toString());
             return null;
         }

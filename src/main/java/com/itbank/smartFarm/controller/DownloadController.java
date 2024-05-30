@@ -38,6 +38,7 @@ public class DownloadController {
                 System.out.println("File not found: " + filename);
                 return ResponseEntity.notFound().build();
             }
+
             // 파일 다운로드 응답 생성
             return ResponseEntity.ok()
                     // Content-Disposition 헤더를 설정하여 파일 다운로드를 브라우저에게 지시
