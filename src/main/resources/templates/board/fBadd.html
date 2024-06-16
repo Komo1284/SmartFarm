@@ -5,23 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Farm</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- TinyMCE Editor CDN -->
-    <script src="https://cdn.tiny.cloud/1/fyxm16for0djpak42fl17x2if4b7qmp1n25rw4nron4fl02p/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: '#content',
-            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
-            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-            tinycomments_mode: 'embedded',
-            tinycomments_author: 'Author name',
-            mergetags_list: [
-                { value: 'First.Name', title: 'First Name' },
-                { value: 'Email', title: 'Email' },
-            ],
-            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
-            height: 800
-        });
-    </script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/ko.js"></script>
+    <style>
+        .ck-editor__editable:not(.ck-editor__nested-editable) {
+
+            height: 700px;
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#f0f8f0]">
 <br>
@@ -75,6 +66,19 @@
         </form>
     </div>
 </div>
+<script>
+
+    ClassicEditor.create( document.querySelector( '#content' ), {
+
+        language: "ko",
+        ckfinder : {
+            uploadUrl: "/image/upload",
+            withCredentials: true
+        }
+
+    } );
+
+</script>
 <div th:replace="~{footer :: footer}"></div>
 </body>
 </html>
