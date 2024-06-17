@@ -44,7 +44,7 @@ public interface OrderDAO {
 	public int order(CartVO input);
 
 	// 주문 수정 - 주소 -배송지의 주소를 업데이트합니다.
-	@Update("update delivery set address=#{address}  where id=#{delivery_id}")
+	@Update("UPDATE delivery SET address = #{address} WHERE id = (SELECT delivery_id FROM orders WHERE id = #{order_id})")
 	public int modifyaddress(CartVO input);
 
 	// 주문정보 생성 - 데이터베이스에 새 주문 항목을 생성합니다.

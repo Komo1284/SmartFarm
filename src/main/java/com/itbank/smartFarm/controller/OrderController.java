@@ -107,13 +107,10 @@ public class OrderController {
 		int modifyResult = os.modify(input);
 		int modifyAddressResult = os.modifyaddress(input);
 
-		String msg = "수정 실패.";
-		if (modifyResult == 0 || modifyAddressResult == 0) {
-			msg = "수정 성공.";
-		}
+		String msg = "수정 성공";
 
-		mav.addObject("row", (modifyResult != 0 && modifyAddressResult != 0) ? 1 : 0);
-		mav.addObject("path", "/pay/newUpdate");
+
+		mav.addObject("path", "/pay/cart");
 		mav.addObject("msg", msg);
 		
 		mav.setViewName("/pay/Message");
