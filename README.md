@@ -4,6 +4,12 @@
 
 ***
 
+### 프로젝트 ppt
+[SmartFarm](/SmartFarm.pdf)
+[SmartFarm(long)](/SmartFarm(long).pdf)
+
+---
+
 # 📑 목차
 ***
 * #### [개요](#-개요)
